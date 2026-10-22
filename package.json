@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "pnpm": "^10.9.0"
+  },
+  "devDependencies": {
+    "@iconify-json/mdi": "^1.2.3",
+    "unplugin-icons": "^24.0.0",
+    "unplugin-vue-components": "^32.1.0",
+    "vitepress": "^1.6.4"
+  },
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  }
+}
