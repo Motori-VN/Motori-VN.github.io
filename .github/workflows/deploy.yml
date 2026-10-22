@@ -35,11 +35,23 @@ jobs:
           node-version: 24
           cache: pnpm
       - name: Setup Pages
+        id: pages
         uses: actions/configure-pages@v4
       - name: Install dependencies
         run: pnpm install
       - name: Build with VitePress
-        run: pnpm run docs:build 
+
+        env:
+          DOCS_BASE: ${{ steps.pages.outputs.base_path }}
+        run: pnpm run docs:build
+      - name: Verify base was applied
+        env:
+          DOCS_BASE: ${{ steps.pages.outputs.base_path }}
+        run: |
+          prefix="${DOCS_BASE%/}/assets/"
+          echo "expected asset prefix: ${prefix}"
+          grep -qF "src=\"${prefix}" docs/.vitepress/dist/index.html \
+            || { echo "::error::index.html 中找不到 ${prefix}，base 未生效"; exit 1; }
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

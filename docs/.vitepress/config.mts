@@ -4,6 +4,21 @@ import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
 
 /**
+ * 站点的部署子路径（Vite 的 `base`）。它只在**构建期**生效，会被写进产物的
+ * 每一个资源 URL 与路由里，所以一份 `dist` 只能服务一个 URL 前缀。
+ *
+ * 本站同时部署到两个地方，而两者的路径并不相同：
+ *
+ * 因此这里不写死，改由构建环境用 `DOCS_BASE` 注入（CI 里各自设置），
+ * 本地 `docs:dev` 或未设置时回落到根路径 '/'。
+ */
+function resolveBase(): string {
+  const raw = (process.env.DOCS_BASE ?? '').trim()
+  if (!raw || raw === '/') return '/'
+  return `/${raw.replace(/^\/+|\/+$/g, '')}/`
+}
+
+/**
  * GitHub 风格告警（`> [!IMPORTANT]` 等）在 VitePress 1.x 里标题写死为英文，
  * 官方没有提供 `importantLabel` 之类的配置项，这里用一个 markdown-it 规则补上中文。
  */
@@ -20,6 +35,8 @@ const alertLabels: Record<string, string> = {
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   lang: 'zh-CN',
+  // 具体值由构建环境通过 DOCS_BASE 传入，见上方 resolveBase()。
+  base: resolveBase(),
   title: 'Motori',
   description: 'Motori',
 
